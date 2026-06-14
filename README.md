@@ -8,16 +8,16 @@
 * **Веб-фреймворк:** FastAPI (ASGI)
 * **База даних:** PostgreSQL / SQLite (для тестів)
 * **ORM:** SQLAlchemy 2.0
-* **Токени безпеки:** PyJWT / Jose
+* **Токени безпеки:** bcrypt, python-jose
 * **Тестування:** pytest 9.0
 
 ## Базове налаштування проєкту
 Ці кроки виконуються один раз для всього циклу розробки.
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/ivan-hrytsenko/architecture-labs.git
 cd farm-products-marketplace-database-system
-python -m venv venv
+python -m venv .venv
 source venv/bin/activate
 pip install -r requirements.txt
 
@@ -40,14 +40,27 @@ pip install -r requirements.txt
 * `lab1/src/main.py` — Точка входу FastAPI та ендпоінти
 * `lab1/tests/` — Інтеграційні тести API
 
+#### Запуск бази даних (Docker)
+
+```bash
+docker run --name farm-postgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=farm_products -p 5432:5432 -d postgres
+
+```
+
 #### Створення конфігурації
 
 Створіть файл `.env` у папці `lab1/`:
 
-```env
-DATABASE_URL=sqlite:///./farm_marketplace.db
+**Варіант А: Локальна SQLite (Швидкий старт без Docker)**
+  ```env
+  DATABASE_URL=sqlite:///./farm_marketplace.db
 
-```
+  ```
+
+**Варіант Б: PostgreSQL у Docker (Аналог production-середовища)**
+  ```env
+  DATABASE_URL=postgresql://user:password@localhost:5432/farm_products
+  ```
 
 #### Запуск веб-сервера
 

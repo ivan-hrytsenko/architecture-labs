@@ -8,3 +8,5 @@ httpx
 pyjwt
 passlib[bcrypt]
 pydantic[email]
+python-jose
+bcrypt==4.3.0
