@@ -16,10 +16,9 @@
 
 ```bash
 git clone https://github.com/ivan-hrytsenko/architecture-labs.git
-cd farm-products-marketplace-database-system
 python -m venv .venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -r ./lab1/requirements.txt
 
 ```
 
@@ -75,5 +74,41 @@ uvicorn lab1.src.main:app --reload
 
 ```bash
 pytest lab1/tests/
+
+```
+
+### Лабораторна робота №2: Шарова архітектура та доменна модель
+
+Рефакторинг системи із застосуванням принципів Чистої архітектури (Clean Architecture), інверсії залежностей (DIP) та насиченої доменної моделі (Rich Domain Model).
+
+#### Структура модулів
+
+* `lab2/src/domain/` — Ядро системи: насичені сутності, Value Objects, фабрики та інтерфейси репозиторіїв.
+* `lab2/src/application/` — Прикладний шар: сценарії використання (Use Cases), що оркеструють виконання операцій.
+* `lab2/src/infrastructure/` — Шар інфраструктури: реалізація репозиторіїв через SQLAlchemy, ORM-моделі бази даних та мапери даних.
+* `lab2/src/presentation/` — Шар представлення: ендпоінти FastAPI, схеми валідації Pydantic (DTO) та логіка автентифікації.
+* `lab2/tests/` — Розділене тестування: ізольовані Unit-тести для домену та Use Cases, а також Integration-тести для API.
+
+#### Налаштування середовища та запуску
+
+Перед виконанням команд переконайтеся, що віртуальне середовище активоване, а термінал знаходиться в корені проєкту.
+
+**Конфігурація шляхів імпорту:**
+* Windows (PowerShell): `$env:PYTHONPATH = "lab2"`
+* Windows (CMD): `set PYTHONPATH=lab2`
+* Linux / macOS: `export PYTHONPATH=lab2`
+
+#### Запуск веб-сервера
+
+```Bash
+uvicorn src.presentation.main:app --reload
+```
+
+Документація API (Swagger) після запуску доступна за адресою: `http://127.0.0.1:8000/docs`
+
+#### Запуск тестування
+
+```bash
+pytest lab2/tests/
 
 ```
