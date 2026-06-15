@@ -112,3 +112,40 @@ uvicorn src.presentation.main:app --reload
 pytest lab2/tests/
 
 ```
+
+### Лабораторна робота №3: Впровадження патерну CQS (Command Query Separation)
+
+Рефакторинг прикладного та презентаційного шарів із застосуванням патерну розділення операцій модифікації стану системи (Commands) та операцій читання даних (Queries), а також оптимізація тестування.
+
+#### Структура модулів
+
+* `lab3/src/domain/` — Ядро системи: насичені доменні моделі, Value Objects (`Price`, `Quantity`), фабрика та інтерфейси.
+* `lab3/src/application/commands/` — Модель запису (Write): класи-команди та обробники (`Command Handlers`) для зміни стану.
+* `lab3/src/application/queries/` — Модель читання (Read): обробники запитів (`Query Handlers`) та плоскі `Read Models` для швидкої вибірки даних через SQLAlchemy.
+* `lab3/src/infrastructure/` — Шар інфраструктури: реалізація репозиторіїв, ORM-моделі бази даних та мапери даних.
+* `lab3/src/presentation/` — Шар представлення: "тонкі" ендпоінти FastAPI, схеми валідації Pydantic та фабрика залежностей (`dependencies.py`).
+* `lab3/tests/` — Розділене тестування: ізольовані Unit-тести для команд (через In-Memory Fakes) та інтеграційні тести для запитів (через тестову БД).
+
+#### Налаштування середовища та запуску
+
+Перед виконанням команд переконайтеся, що віртуальне середовище активоване, а термінал знаходиться в корені проєкту.
+
+**Конфігурація шляхів імпорту:**
+* Windows (PowerShell): `$env:PYTHONPATH = "lab3"`
+* Windows (CMD): `set PYTHONPATH=lab3`
+* Linux / macOS: `export PYTHONPATH=lab3`
+
+#### Запуск веб-сервера
+
+```bash
+uvicorn src.presentation.main:app --reload
+```
+
+Документація API (Swagger) після запуску доступна за адресою: `http://127.0.0.1:8000/docs`
+
+#### Запуск тестування
+
+```bash
+pytest lab3/tests/
+
+```
