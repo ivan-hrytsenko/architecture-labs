@@ -1,0 +1,67 @@
+from sqlalchemy.orm import Session
+from typing import List, Optional
+from src.core.domain.interfaces import UserRepository, ProductRepository
+from src.core.domain.models import User, Product
+from src.core.infrastructure.models import UserORM, ProductORM
+from src.core.infrastructure.mappers import DataMapper
+
+class SQLAlchemyUserRepository(UserRepository):
+    def __init__(self, session: Session):
+        self._session = session
+
+    def get_by_id(self, user_id: int) -> Optional[User]:
+        orm_user = self._session.query(UserORM).filter_by(id=user_id).first()
+        return DataMapper.user_to_domain(orm_user)
+
+    def get_by_email(self, email: str) -> Optional[User]:
+        orm_user = self._session.query(UserORM).filter_by(email=email).first()
+        return DataMapper.user_to_domain(orm_user)
+
+    def save(self, user: User) -> User:
+        orm_user = DataMapper.user_to_orm(user)
+        if orm_user.id:
+            existing = self._session.query(UserORM).filter_by(id=orm_user.id).first()
+            if existing:
+                existing.username = orm_user.username
+                existing.email = orm_user.email
+                existing.role = orm_user.role
+                orm_user = existing
+        else:
+            self._session.add(orm_user)
+        self._session.commit()
+        self._session.refresh(orm_user)
+        return DataMapper.user_to_domain(orm_user)
+
+    def delete(self, user_id: int) -> None:
+        orm_user = self._session.query(UserORM).filter_by(id=user_id).first()
+        if orm_user:
+            self._session.delete(orm_user)
+            self._session.commit()
+
+class SQLAlchemyProductRepository(ProductRepository):
+    def __init__(self, session: Session):
+        self._session = session
+
+    def get_by_id(self, product_id: int) -> Optional[Product]:
+        orm_product = self._session.query(ProductORM).filter_by(id=product_id).first()
+        return DataMapper.product_to_domain(orm_product)
+
+    def get_all(self) -> List[Product]:
+        orm_products = self._session.query(ProductORM).all()
+        return [DataMapper.product_to_domain(p) for p in orm_products]
+
+    def save(self, product: Product) -> Product:
+        orm_product = DataMapper.product_to_orm(product)
+        if orm_product.id:
+            existing = self._session.query(ProductORM).filter_by(id=orm_product.id).first()
+            if existing:
+                existing.title = orm_product.title
+                existing.description = orm_product.description
+                existing.price = orm_product.price
+                existing.quantity = orm_product.quantity
+                orm_product = existing
+        else:
+            self._session.add(orm_product)
+        self._session.commit()
+        self._session.refresh(orm_product)
+        return DataMapper.product_to_domain(orm_product)
